@@ -40,7 +40,7 @@ class Mailer extends CatalogController {
 
         if ( $objNotification === null ) {
 
-            $this->log( 'The notification was not found ID ' . $intNotificationId , __METHOD__, TL_ERROR );
+            $this->log( 'The notification was not found ID ' . $this->arrParameters['notification'] , __METHOD__, TL_ERROR );
 
             return null;
         }
@@ -158,6 +158,14 @@ class Mailer extends CatalogController {
             ];
         }
 
+        $arrPostData = Toolkit::deserialize( $this->arrParameters['post'] );
+
+        $strPostType = '';
+        $arrPostTokens = [];
+
+        if ( is_array( $arrPostData ) && isset( $arrPostData['tokens'] ) ) $arrPostTokens = $arrPostData['tokens'];
+        if ( is_array( $arrPostData ) && isset( $arrPostData['type'] ) ) $strPostType = $arrPostData['type'];
+
         $objEntities = $this->SQLQueryBuilder->execute( $arrQuery );
 
         if ( !$objEntities->numRows ) return null;
@@ -190,6 +198,15 @@ class Mailer extends CatalogController {
                 $arrTokens[ 'table_' . $strOptionname ] = is_array( $strOptionname ) ? serialize( $strOptionname ) : $strOptionname;
             }
 
+            foreach ( $arrPostTokens as $strToken => $strValue ) {
+
+                $arrTokens[ $strToken ] = $strValue;
+            }
+
+            if ( $strPostType ) {
+
+                $arrTokens[ 'post_type' ] = $strPostType;
+            }
 
             foreach ( $this->arrCatalogFields as $strFieldname => $arrField ) {
 
