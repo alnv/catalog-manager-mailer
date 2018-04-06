@@ -99,12 +99,17 @@ class tl_mailer extends \Backend {
             }
 
             /*
-            $objMail = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( \Input::get('id') );
-            $arrParameters = $objMail->row();
-            $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'] );
-            $objMailer = new Mailer( $arrParameters );
-            $objMailer->send();
-            */
+             * @debug
+             *
+
+             $objMail = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( \Input::get('id') );
+             $arrParameters = $objMail->row();
+             $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'] );
+             $objMailer = new Mailer( $arrParameters );
+             $objMailer->send();
+
+             *
+             */
 
             $this->redirect( preg_replace( '/&(amp;)?sendMail=[^&]*/i', '', preg_replace( '/&(amp;)?' . preg_quote( "1", '/' ) . '=[^&]*/i', '', \Environment::get('request') ) ) );
         }
