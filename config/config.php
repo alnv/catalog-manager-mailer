@@ -13,21 +13,25 @@ $GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-mailer'] = [
     ]
 ];
 
+$GLOBALS['TL_HOOKS']['catalogManagerEntityOnCreate'][] = [ 'CatalogManager\Mailer\FrontendEditingTrigger', 'onCreate' ];
+$GLOBALS['TL_HOOKS']['catalogManagerEntityOnUpdate'][] = [ 'CatalogManager\Mailer\FrontendEditingTrigger', 'onUpdate' ];
+$GLOBALS['TL_HOOKS']['catalogManagerEntityOnDelete'][] = [ 'CatalogManager\Mailer\FrontendEditingTrigger', 'onDelete' ];
+
 $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['CATALOG_MAILER'] = [
 
-    'MAIL_TEMPLATE' => [
+    'CATALOG_MAILER' => [
 
-        'recipients' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*' ],
-        'attachment_tokens' => [ 'raw_*', 'clean_*', 'field_*', 'table_*' ],
-        'email_replyTo' => [ 'admin_email','recipient', 'raw_*', 'clean_*' ],
-        'email_sender_name' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*' ],
-        'email_recipient_cc' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*' ],
-        'file_name' => [ 'admin_email', 'raw_*', 'clean_*', 'field_*', 'table_*' ],
-        'email_recipient_bcc' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*' ],
-        'email_sender_address' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*' ],
-        'file_content' => [ 'admin_email', 'raw_*', 'clean_*', 'field_*', 'table_*' ],
-        'email_subject' => [ 'admin_email', 'domain', 'recipient', 'raw_*', 'clean_*' ],
-        'email_text' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*' ],
-        'email_html' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*' ]
+        'recipients' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'attachment_tokens' => [ 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_replyTo' => [ 'admin_email','recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_sender_name' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_recipient_cc' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'file_name' => [ 'admin_email', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_recipient_bcc' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_sender_address' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'file_content' => [ 'admin_email', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_subject' => [ 'admin_email', 'domain', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_text' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'email_html' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ]
     ]
 ];
