@@ -82,21 +82,21 @@ class Mailer extends CatalogController {
 
         else {
 
-            $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
-
-                'in_progress' => '',
-                'state' => 'ready',
-                'end_at' => time(),
-                'offset' => 0
-
-            ])->execute( $this->arrParameters['id'] );
-
-            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is ready', __METHOD__, TL_GENERAL );
+            $this->end();
+            $this->checkMailerQueue();
         }
     }
 
 
     protected function getEntities() {
+
+        $arrPostData = Toolkit::deserialize( $this->arrParameters['post'] );
+
+        $strPostType = '';
+        $arrPostTokens = [];
+
+        if ( is_array( $arrPostData ) && isset( $arrPostData['tokens'] ) ) $arrPostTokens = $arrPostData['tokens'];
+        if ( is_array( $arrPostData ) && isset( $arrPostData['type'] ) ) $strPostType = $arrPostData['type'];
 
         $arrQuery = [
 
@@ -106,7 +106,12 @@ class Mailer extends CatalogController {
 
         if ( $this->arrParameters['useFilter'] && is_array( $this->arrParameters['dbTaxonomy'] ) && isset( $this->arrParameters['dbTaxonomy']['query'] ) ) {
 
-            $arrQuery['where'] = Toolkit::parseQueries( $this->arrParameters['dbTaxonomy']['query'] ); // @todo
+            $arrQuery['where'] = Toolkit::parseQueries( $this->arrParameters['dbTaxonomy']['query'], function ( $arrQuery ) use ( $arrPostData ) {
+
+                $arrQuery['value'] = $this->getParseQueryValue( $arrQuery['value'], $arrPostData );
+
+                return $arrQuery;
+            });
         }
 
         if ( is_array( $this->arrCatalog['operations'] ) && in_array( 'invisible', $this->arrCatalog['operations'] ) ) {
@@ -157,14 +162,6 @@ class Mailer extends CatalogController {
                 'value' => '1'
             ];
         }
-
-        $arrPostData = Toolkit::deserialize( $this->arrParameters['post'] );
-
-        $strPostType = '';
-        $arrPostTokens = [];
-
-        if ( is_array( $arrPostData ) && isset( $arrPostData['tokens'] ) ) $arrPostTokens = $arrPostData['tokens'];
-        if ( is_array( $arrPostData ) && isset( $arrPostData['type'] ) ) $strPostType = $arrPostData['type'];
 
         $objEntities = $this->SQLQueryBuilder->execute( $arrQuery );
 
@@ -226,6 +223,64 @@ class Mailer extends CatalogController {
             }
 
             $this->arrEntities[ $arrTokens['recipient'] ] = $arrTokens;
+        }
+    }
+
+
+    protected function getParseQueryValue( $strValue = '', $arrPostData = [] ) {
+
+        if ( !empty( $strValue ) && is_string( $strValue ) && strpos( $strValue, '{{' ) !== false ) {
+
+            $arrTags = preg_split( '/{{(([^{}]*|(?R))*)}}/', $strValue, -1, PREG_SPLIT_DELIM_CAPTURE );
+            $strTag = implode( '', $arrTags );
+
+            if ( $strTag && isset( $arrPostData['row'] ) && is_array( $arrPostData['row'] ) ) {
+
+                return Toolkit::isEmpty( $arrPostData['row'][ $strTag ] ) ? '' : $arrPostData['row'][ $strTag ];
+            }
+        }
+
+        return $strValue;
+    }
+
+
+    protected function end() {
+
+        $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
+
+            'post' => serialize( [] ),
+            'in_progress' => '',
+            'state' => 'ready',
+            'end_at' => time(),
+            'offset' => 0
+
+        ])->execute( $this->arrParameters['id'] );
+
+        \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is ready', __METHOD__, TL_GENERAL );
+    }
+
+
+    protected function checkMailerQueue() {
+
+        $objQueue = $this->Database->prepare( 'SELECT * FROM tl_mailer_queue ORDER BY tstamp' )->limit(1)->execute();
+
+        if ( $objQueue->numRows ) {
+
+            $objMailer = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( $objQueue->mailer_id );
+
+            if ( !$objMailer->numRows ) return null;
+
+            $this->Database->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
+
+                'post' => $objQueue->post,
+                'start_at' => time(),
+                'in_progress' => '1',
+                'state' => 'active',
+                'offset' => 0
+
+            ])->execute( $objMailer->id );
+
+            $this->Database->prepare( 'DELETE FROM tl_mailer_queue WHERE id = ?' )->execute( $objQueue->id );
         }
     }
 }
