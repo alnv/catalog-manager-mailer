@@ -9,7 +9,8 @@ $GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-mailer'] = [
 
     'tables' => [
 
-        'tl_mailer'
+        'tl_mailer',
+        'tl_mailer_queue'
     ]
 ];
 
