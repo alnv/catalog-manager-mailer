@@ -93,7 +93,7 @@ class tl_mailer extends \Backend {
                     'start_at' => time(),
                     'in_progress' => '1',
                     'state' => 'active',
-                    'offset' => 0
+                    'offset' => 0,
 
                 ])->execute( \Input::get('id') );
             }
@@ -101,13 +101,11 @@ class tl_mailer extends \Backend {
             /*
              * @debug
              *
-
              $objMail = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( \Input::get('id') );
              $arrParameters = $objMail->row();
              $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'] );
              $objMailer = new Mailer( $arrParameters );
              $objMailer->send();
-
              *
              */
 
