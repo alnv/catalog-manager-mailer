@@ -14,6 +14,7 @@ class FrontendEditingTrigger extends CatalogController {
 
     protected $arrPostData = [
 
+        'row' => [],
         'tokens' => [],
         'type' => null,
         'table' => null
@@ -67,15 +68,31 @@ class FrontendEditingTrigger extends CatalogController {
 
     protected function runMailer( $intMailerId ) {
 
-        $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
+        $objMailer = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( $intMailerId );
 
-            'post' => serialize( $this->arrPostData ),
-            'start_at' => time(),
-            'in_progress' => '1',
-            'state' => 'active',
-            'offset' => 0
+        if ( !$objMailer->in_progress ) {
 
-        ])->execute( $intMailerId );
+            $this->Database->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
+
+                'post' => serialize( $this->arrPostData ),
+                'start_at' => time(),
+                'in_progress' => '1',
+                'state' => 'active',
+                'offset' => 0
+
+            ])->execute( $intMailerId );
+        }
+
+        else {
+
+            $this->Database->prepare('INSERT INTO tl_mailer_queue %s')->set([
+
+                'tstamp' => time(),
+                'mailer_id' => $intMailerId,
+                'post' => serialize( $this->arrPostData ),
+
+            ])->execute();
+        }
     }
 
 
@@ -84,6 +101,7 @@ class FrontendEditingTrigger extends CatalogController {
         $this->import( 'CatalogFieldBuilder' );
 
         $this->arrPostData['table'] = $arrData['table'];
+        $this->arrPostData['row'] = $arrData['row'];
         $this->arrPostData['type'] = $strType;
 
         $this->CatalogFieldBuilder->initialize( $this->arrPostData['table'] );
