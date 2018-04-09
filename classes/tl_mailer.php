@@ -10,19 +10,7 @@ class tl_mailer extends \Backend {
 
     public function getCatalogs() {
 
-        $arrReturn = [];
-        $objModules = $this->Database->prepare('SELECT * FROM tl_catalog WHERE tstamp > 0')->execute( \Input::get('id') );
-
-        if ( !$objModules->numRows ) return $arrReturn;
-
-        while ( $objModules->next() ) {
-
-            if ( !$objModules->tablename ) continue;
-
-            $arrReturn[ $objModules->tablename ] = $objModules->name ? $objModules->name : $objModules->tablename;
-        }
-
-        return $arrReturn;
+        return $this->Database->listTables( null );
     }
 
 
