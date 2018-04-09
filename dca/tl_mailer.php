@@ -47,7 +47,7 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
 
             'send' => [
 
-                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+                'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['startMailerConfirm'] . '\'))return false;Backend.getScrollOffset()"',
                 'label' => &$GLOBALS['TL_LANG']['tl_mailer']['send'],
                 'href' => 'sendMail=1',
                 'icon' => 'member_.gif'
@@ -113,11 +113,13 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
 
         'offset' => [
 
+            'label' => &$GLOBALS['TL_LANG']['tl_mailer']['offset'],
             'sql' => "int(10) unsigned NOT NULL default '0'"
         ],
 
         'in_progress' => [
 
+            'label' => &$GLOBALS['TL_LANG']['tl_mailer']['in_progress'],
             'sql' => "char(1) NOT NULL default ''"
         ],
 
