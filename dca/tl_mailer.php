@@ -293,6 +293,12 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
 
             'label' => &$GLOBALS['TL_LANG']['tl_mailer']['post'],
             'sql' => "blob NULL"
+        ],
+
+        'attachment' => [
+
+            'label' => &$GLOBALS['TL_LANG']['tl_mailer']['attachment'],
+            'sql' => "blob NULL"
         ]
     ]
 ];
