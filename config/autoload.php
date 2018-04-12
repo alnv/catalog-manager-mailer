@@ -11,3 +11,8 @@ ClassLoader::addClasses([
     'CatalogManager\Mailer\tl_reminder' => 'system/modules/catalog-manager-mailer/classes/tl_reminder.php',
     'CatalogManager\Mailer\FrontendEditingTrigger' => 'system/modules/catalog-manager-mailer/FrontendEditingTrigger.php'
 ]);
+
+TemplateLoader::addFiles([
+
+    'reminder_attachment' => 'system/modules/catalog-manager-mailer/templates',
+]);
