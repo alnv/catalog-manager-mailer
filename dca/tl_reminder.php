@@ -177,7 +177,7 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
 
             'eval' => [
 
-                'rgxp' => 'time',
+                'rgxp' => 'datim',
                 'datepicker' => true,
                 'tl_class' => 'w50 wizard'
             ],
