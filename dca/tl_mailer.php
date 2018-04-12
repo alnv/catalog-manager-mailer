@@ -150,7 +150,7 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
                 'mandatory' => true,
                 'submitOnChange' => true,
                 'blankOptionLabel' => '-',
-                'includeBlankOption'=> true
+                'includeBlankOption' => true
             ],
 
             'options_callback' => [ 'CatalogManager\Mailer\tl_mailer', 'getCatalogs' ],
