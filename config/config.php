@@ -14,6 +14,17 @@ $GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-mailer'] = [
     ]
 ];
 
+$GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-reminder'] = [
+
+    'name' => 'catalog-manager-reminder',
+    'icon' => 'system/modules/catalog-manager-mailer/assets/icon.svg',
+
+    'tables' => [
+
+        'tl_reminder'
+    ]
+];
+
 $GLOBALS['TL_HOOKS']['catalogManagerEntityOnCreate'][] = [ 'CatalogManager\Mailer\FrontendEditingTrigger', 'onCreate' ];
 $GLOBALS['TL_HOOKS']['catalogManagerEntityOnUpdate'][] = [ 'CatalogManager\Mailer\FrontendEditingTrigger', 'onUpdate' ];
 $GLOBALS['TL_HOOKS']['catalogManagerEntityOnDelete'][] = [ 'CatalogManager\Mailer\FrontendEditingTrigger', 'onDelete' ];
