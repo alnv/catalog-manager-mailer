@@ -1,6 +1,7 @@
 <?php
 
-$GLOBALS['TL_CRON']['minutely'][] = [ 'CatalogManager\Mailer\Cronjob', 'initialize' ];
+$GLOBALS['TL_CRON']['minutely'][] = [ 'CatalogManager\Mailer\Cronjob', 'mailer' ];
+$GLOBALS['TL_CRON']['minutely'][] = [ 'CatalogManager\Mailer\Cronjob', 'reminder' ];
 
 $GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-mailer'] = [
 
@@ -41,9 +42,9 @@ $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['CATALOG_MAILER'] = [
         'file_name' => [ 'admin_email', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
         'email_recipient_bcc' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
         'email_sender_address' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
-        'file_content' => [ 'admin_email', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
+        'file_content' => [ 'admin_email', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type', 'reminder_attachment' ],
         'email_subject' => [ 'admin_email', 'domain', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
-        'email_text' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
-        'email_html' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ]
+        'email_text' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type', 'reminder_attachment' ],
+        'email_html' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type', 'reminder_attachment' ]
     ]
 ];
