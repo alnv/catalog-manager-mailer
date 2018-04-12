@@ -63,7 +63,7 @@ class tl_reminder extends \Backend {
 
     public function getTemplates() {
 
-        return $this->getTemplateGroup( 'reminder_view' );
+        return $this->getTemplateGroup( 'reminder_attachment' );
     }
 
 
