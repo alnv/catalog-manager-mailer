@@ -1,3 +1,18 @@
 <table>
-
+    <thead>
+        <tr>
+            <?php foreach( $this->header as $strColumn => $arrColumn ): ?>
+                <th><?= $arrColumn['title'] ? $arrColumn['title'] : $strColumn ?></th>
+            <?php endforeach; ?>
+        </tr>
+    </thead>
+    <tbody>
+        <?php foreach( $this->rows as $arrRow ): ?>
+            <tr>
+                <?php foreach( $this->header as $strColumn => $arrColumn ): ?>
+                    <td><?= $arrRow[ $strColumn ] ?></td>
+                <?php endforeach; ?>
+            </tr>
+        <?php endforeach; ?>
+    </tbody>
 </table>
