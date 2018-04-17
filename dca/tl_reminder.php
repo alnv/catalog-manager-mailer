@@ -36,14 +36,14 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
             'edit' => [
 
                 'label' => &$GLOBALS['TL_LANG']['tl_reminder']['edit'],
-                'href' => 'act=edit',
+                'href' => 'act=edit&table=tl_reminder',
                 'icon' => 'header.gif'
             ],
 
             'copy' => [
 
                 'label' => &$GLOBALS['TL_LANG']['tl_reminder']['copy'],
-                'href' => 'act=copy',
+                'href' => 'act=copy&table=tl_reminder',
                 'icon' => 'copy.gif'
             ],
 
@@ -51,14 +51,14 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
 
                 'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
                 'label' => &$GLOBALS['TL_LANG']['tl_reminder']['delete'],
-                'href' => 'act=delete',
+                'href' => 'act=delete&table=tl_reminder',
                 'icon' => 'delete.gif',
             ],
 
             'show' => [
 
                 'label' => &$GLOBALS['TL_LANG']['tl_reminder']['show'],
-                'href' => 'act=show',
+                'href' => 'act=show&table=tl_reminder',
                 'icon' => 'show.gif'
             ]
         ],
@@ -83,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
 
     'subpalettes' => [
 
-        'use_attachment' => 'dbTable,attachment_template,tableColumns,dbTaxonomy'
+        'use_attachment' => 'dbTable,attachment_template,tableColumns,dbOrderBy,dbTaxonomy'
     ],
 
     'fields' => [
@@ -287,6 +287,26 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
                 'dcTable' => 'tl_reminder',
                 'taxonomyTable' => [ 'CatalogManager\Mailer\tl_reminder', 'getTaxonomyTable' ],
                 'taxonomyEntities' => [ 'CatalogManager\Mailer\tl_reminder', 'getTaxonomyFields' ]
+            ],
+
+            'exclude' => true,
+            'sql' => "blob NULL"
+        ],
+
+        'dbOrderBy' => [
+
+            'label' => &$GLOBALS['TL_LANG']['tl_reminder']['dbOrderBy'],
+            'inputType' => 'catalogDuplexSelectWizard',
+
+            'eval' => [
+
+                'chosen' => true,
+                'blankOptionLabel' => '-',
+                'includeBlankOption' => true,
+                'mainLabel' => 'catalogManagerFields',
+                'dependedLabel' => 'catalogManagerOrder',
+                'mainOptions' => [ 'CatalogManager\OrderByHelper', 'getSortableFields' ],
+                'dependedOptions' => [ 'CatalogManager\OrderByHelper', 'getOrderByItems' ]
             ],
 
             'exclude' => true,
