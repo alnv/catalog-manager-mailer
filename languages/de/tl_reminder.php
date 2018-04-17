@@ -14,9 +14,10 @@ $GLOBALS['TL_LANG']['tl_reminder']['use_attachment'] = [ 'Anhang erstellen', 'Hi
 $GLOBALS['TL_LANG']['tl_reminder']['dbTaxonomy'] = [ 'Filterung', 'Hier können Sie eine bestimmte Datenbank Auswahl definieren.' ];
 $GLOBALS['TL_LANG']['tl_reminder']['tableColumns'] = [ 'Spalten auswählen', 'Bitte wählen Sie Spalten aus die in der Tabelle angezeigt werden sollen.' ];
 
-$GLOBALS['TL_LANG']['tl_reminder']['first_execution'] = [ 'Erste Ausführung', 'Hier können Sie ddas Datum der ersten Ausführung bestimmen.' ];
+$GLOBALS['TL_LANG']['tl_reminder']['first_execution'] = [ 'Erste Ausführung', 'Hier können Sie das Datum der ersten Ausführung bestimmen.' ];
 $GLOBALS['TL_LANG']['tl_reminder']['last_execution'] = [ 'Letzte Ausführung', 'Hier finden Sie das Datum der letzten Ausführung.' ];
 $GLOBALS['TL_LANG']['tl_reminder']['execution_time'] = [ 'Ausführungszeitpunkt', 'Bitte geben Sie ein Ausführungszeitpunkt ein.' ];
+$GLOBALS['TL_LANG']['tl_reminder']['dbOrderBy'] = [ 'Sortierung', 'Hier können Sie die Sortierreihenfolge beeinflussen.' ];
 $GLOBALS['TL_LANG']['tl_reminder']['interval'] = [ 'Intervall', 'Bitte wählen Sie ein Ausführungsintervall aus.' ];
 
 $GLOBALS['TL_LANG']['tl_reminder']['show'] = [ 'Reminder anzeigen', 'Hier sehen Sie die Einstellungen des Reminders.' ];
