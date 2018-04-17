@@ -97,6 +97,16 @@ class tl_mailer extends \Backend {
              *
              */
 
+            /*
+             * @debug
+             *
+             $objReminder = $this->Database->prepare( 'SELECT * FROM tl_reminder ' )->limit(1)->execute();
+             $objAttachmentBuilder = new AttachmentBuilder();
+             $strAttachment = $objAttachmentBuilder->render( $objReminder );
+             echo($strAttachment);exit;
+             *
+             */
+
             $this->redirect( preg_replace( '/&(amp;)?sendMail=[^&]*/i', '', preg_replace( '/&(amp;)?' . preg_quote( "1", '/' ) . '=[^&]*/i', '', \Environment::get('request') ) ) );
         }
     }
