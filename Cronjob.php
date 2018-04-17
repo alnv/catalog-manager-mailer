@@ -197,5 +197,11 @@ class Cronjob extends CatalogController {
 
             ])->execute();
         }
+
+        $this->Database->prepare('UPDATE tl_reminder %s WHERE id = ?')->set([
+
+            'last_execution' => time()
+
+        ])->execute( $objReminder->id );
     }
 }
