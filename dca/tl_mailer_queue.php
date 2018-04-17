@@ -35,6 +35,11 @@ $GLOBALS['TL_DCA']['tl_mailer_queue'] = [
         'post' => [
 
             'sql' => "blob NULL"
+        ],
+
+        'attachment' => [
+
+            'sql' => "blob NULL"
         ]
     ]
 ];
