@@ -250,6 +250,7 @@ class Mailer extends CatalogController {
 
             'post' => serialize( [] ),
             'in_progress' => '',
+            'attachment' => '',
             'state' => 'ready',
             'end_at' => time(),
             'offset' => 0
@@ -272,6 +273,7 @@ class Mailer extends CatalogController {
 
             $this->Database->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
 
+                'attachment' => $objQueue->attachment,
                 'post' => $objQueue->post,
                 'start_at' => time(),
                 'in_progress' => '1',
