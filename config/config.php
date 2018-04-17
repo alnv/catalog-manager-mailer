@@ -48,3 +48,7 @@ $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['CATALOG_MAILER'] = [
         'email_html' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type', 'reminder_attachment' ]
     ]
 ];
+
+// CRONJOB DEBUG REMINDER
+// $objCronJob = new CatalogManager\Mailer\Cronjob();
+// $objCronJob->reminder();
