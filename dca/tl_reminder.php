@@ -28,7 +28,7 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
         'label' => [
 
             'showColumns' => true,
-            'fields' => [ 'name', 'first_execution', 'last_execution', 'execution_time', 'interval' ]
+            'fields' => [ 'name', 'first_execution', 'last_execution', 'interval' ]
         ],
 
         'operations' => [
@@ -78,7 +78,7 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
     'palettes' => [
 
         '__selector__' => [ 'use_attachment' ],
-        'default' => '{general_settings},name,mailer_id;{reminder_settings},first_execution,last_execution,execution_time,interval;{attachment_settings},use_attachment;'
+        'default' => '{general_settings},name,mailer_id;{reminder_settings},first_execution,interval,last_execution;{attachment_settings},use_attachment;'
     ],
 
     'subpalettes' => [
@@ -142,11 +142,13 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
 
             'eval' => [
 
-                'rgxp' => 'date',
+                'rgxp' => 'datim',
                 'mandatory' => true,
                 'datepicker' => true,
                 'tl_class' => 'w50 wizard'
             ],
+
+            'flag' => 6,
 
             'exclude' => true,
             'sql' => "int(10) unsigned NOT NULL default '0'"
@@ -160,27 +162,12 @@ $GLOBALS['TL_DCA']['tl_reminder'] = [
 
             'eval' => [
 
+                'rgxp' => 'datim',
                 'readonly' => true,
                 'tl_class' => 'w50'
             ],
 
-            'exclude' => true,
-            'sql' => "int(10) unsigned NOT NULL default '0'"
-        ],
-
-        'execution_time' => [
-
-            'label' => &$GLOBALS['TL_LANG']['tl_reminder']['execution_time'],
-            'inputType' => 'text',
-
-            'default' => time(),
-
-            'eval' => [
-
-                'rgxp' => 'datim',
-                'datepicker' => true,
-                'tl_class' => 'w50 wizard'
-            ],
+            'flag' => 6,
 
             'exclude' => true,
             'sql' => "int(10) unsigned NOT NULL default '0'"
