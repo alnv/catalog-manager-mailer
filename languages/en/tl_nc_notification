@@ -1,0 +1,4 @@
+<?php
+
+$GLOBALS['TL_LANG']['tl_nc_notification']['type']['CATALOG_MAILER'] = 'Catalog Mailer';
+$GLOBALS['TL_LANG']['tl_nc_notification']['type']['DEFAULT_MAILER'] = [ 'Catalog Mailer', 'Here you can create a notification for the mailer catalog.' ];
