@@ -37,9 +37,9 @@ $GLOBALS['TL_DCA']['tl_mailer_queue'] = [
             'sql' => "blob NULL"
         ],
 
-        'attachment' => [
+        'reminder_id' => [
 
-            'sql' => "blob NULL"
+            'sql' => "int(10) unsigned NOT NULL default '0'",
         ]
     ]
 ];

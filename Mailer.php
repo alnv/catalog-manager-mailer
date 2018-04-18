@@ -108,7 +108,7 @@ class Mailer extends CatalogController {
 
             $arrQuery['where'] = Toolkit::parseQueries( $this->arrParameters['dbTaxonomy']['query'], function ( $arrQuery ) use ( $arrPostData ) {
 
-                $arrQuery['value'] = $this->getParseQueryValue( $arrQuery['value'], $arrPostData );
+                $arrQuery['value'] = Toolkit::parsePseudoInserttag( $arrQuery['value'], $arrPostData );
 
                 return $arrQuery;
             });
@@ -222,25 +222,21 @@ class Mailer extends CatalogController {
                 }
             }
 
+            $arrTokens['reminder_attachment'] = '';
+
+            if ( $this->arrParameters['reminder_id'] ) {
+
+                $objReminder = $this->Database->prepare( 'SELECT * FROM tl_reminder WHERE id = ?' )->limit(1)->execute( $this->arrParameters['reminder_id'] );
+
+                if ( $objReminder->numRows ) {
+
+                    $objAttachmentBuilder = new AttachmentBuilder();
+                    $arrTokens['reminder_attachment'] = $objAttachmentBuilder->render( $objReminder, $arrEntity );
+                }
+            }
+
             $this->arrEntities[ $arrTokens['recipient'] ] = $arrTokens;
         }
-    }
-
-
-    protected function getParseQueryValue( $strValue = '', $arrPostData = [] ) {
-
-        if ( !empty( $strValue ) && is_string( $strValue ) && strpos( $strValue, '{{' ) !== false ) {
-
-            $arrTags = preg_split( '/{{(([^{}]*|(?R))*)}}/', $strValue, -1, PREG_SPLIT_DELIM_CAPTURE );
-            $strTag = implode( '', $arrTags );
-
-            if ( $strTag && isset( $arrPostData['row'] ) && is_array( $arrPostData['row'] ) ) {
-
-                return Toolkit::isEmpty( $arrPostData['row'][ $strTag ] ) ? '' : $arrPostData['row'][ $strTag ];
-            }
-        }
-
-        return $strValue;
     }
 
 
@@ -250,7 +246,7 @@ class Mailer extends CatalogController {
 
             'post' => serialize( [] ),
             'in_progress' => '',
-            'attachment' => '',
+            'reminder_id' => 0,
             'state' => 'ready',
             'end_at' => time(),
             'offset' => 0
@@ -273,7 +269,7 @@ class Mailer extends CatalogController {
 
             $this->Database->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
 
-                'attachment' => $objQueue->attachment,
+                'reminder_id' => $objQueue->reminder_id,
                 'post' => $objQueue->post,
                 'start_at' => time(),
                 'in_progress' => '1',

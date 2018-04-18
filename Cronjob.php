@@ -169,14 +169,11 @@ class Cronjob extends CatalogController {
 
         $objMailer = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( $objReminder->mailer_id );
 
-        $objAttachmentBuilder = new AttachmentBuilder();
-        $strAttachment = $objAttachmentBuilder->render( $objReminder );
-
         if ( !$objMailer->in_progress ) {
 
             $this->Database->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
 
-                'attachment' => $strAttachment,
+                'reminder_id' => $objReminder->id,
                 'post' => serialize( [] ),
                 'start_at' => time(),
                 'in_progress' => '1',
@@ -192,7 +189,7 @@ class Cronjob extends CatalogController {
 
                 'tstamp' => time(),
                 'post' => serialize( [] ),
-                'attachment' => $strAttachment,
+                'reminder_id' => $objReminder->id,
                 'mailer_id' => $objReminder->mailer_id
 
             ])->execute();
