@@ -109,8 +109,8 @@ class FrontendEditingTrigger extends CatalogController {
 
         $arrClean = Toolkit::parseCatalogValues( $arrData['row'], $this->arrCatalogFields, true );
 
-        Toolkit::setTokens( $arrData['row'], 'post_raw', $this->arrPostData['tokens'] );
-        Toolkit::setTokens( $arrClean, 'post_clean', $this->arrPostData['tokens'] );
+        Toolkit::setTokens( $arrData['row'], 'post_raw_', $this->arrPostData['tokens'] );
+        Toolkit::setTokens( $arrClean, 'post_clean_', $this->arrPostData['tokens'] );
 
         if ( in_array( $strType, [ 'duplicate', 'update' ] ) ) {
 
