@@ -168,9 +168,10 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
 
                 'chosen' => true,
                 'tl_class' => 'w50',
+                'mandatory' => true,
                 'blankOptionLabel' => '-',
                 'includeBlankOption'=> true,
-                'ncNotificationChoices' => [ 'CATALOG_MAILER' ]
+                'ncNotificationChoices' => [ 'DEFAULT_MAILER' ]
             ],
 
             'options_callback' => [ 'CatalogManager\Mailer\tl_mailer', 'getNotifications' ],
@@ -188,7 +189,6 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
 
                 'chosen' => true,
                 'tl_class' => 'w50',
-                'mandatory' => true,
                 'blankOptionLabel' => '-',
                 'includeBlankOption'=> true
             ],
