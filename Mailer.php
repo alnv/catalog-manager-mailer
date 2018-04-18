@@ -108,7 +108,7 @@ class Mailer extends CatalogController {
 
             $arrQuery['where'] = Toolkit::parseQueries( $this->arrParameters['dbTaxonomy']['query'], function ( $arrQuery ) use ( $arrPostData ) {
 
-                $arrQuery['value'] = Toolkit::parsePseudoInserttag( $arrQuery['value'], $arrPostData );
+                $arrQuery['value'] = Toolkit::parsePseudoInserttag( $arrQuery['value'], $arrPostData['row'] );
 
                 return $arrQuery;
             });
@@ -170,15 +170,16 @@ class Mailer extends CatalogController {
         while ( $objEntities->next() ) {
 
             $arrEntity = $objEntities->row();
+            $strIdentifier = $this->arrParameters['emailField'] ? $this->arrParameters['emailField'] : 'id';
 
             if ( !is_array( $arrEntity ) ) continue;
-            if ( !isset( $arrEntity[ $this->arrParameters['emailField'] ] ) || Toolkit::isEmpty( $arrEntity[ $this->arrParameters['emailField'] ] ) ) continue;
+            if ( !isset( $arrEntity[ $strIdentifier ] ) || Toolkit::isEmpty( $arrEntity[ $strIdentifier ] ) ) continue;
 
             $arrRecord = Toolkit::parseCatalogValues( $arrEntity, $this->arrCatalogFields, true );
 
             $arrTokens = [];
+            $arrTokens['recipient'] = $arrEntity[ $strIdentifier ];
             $arrTokens['admin_email'] = \Config::get( 'adminEmail' );
-            $arrTokens['recipient'] = $arrEntity[ $this->arrParameters['emailField'] ];
 
             foreach ( $arrRecord as $strFieldname => $strValue ) {
 
