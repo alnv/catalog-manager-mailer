@@ -32,7 +32,7 @@ $GLOBALS['TL_HOOKS']['catalogManagerEntityOnDelete'][] = [ 'CatalogManager\Maile
 
 $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['CATALOG_MAILER'] = [
 
-    'CATALOG_MAILER' => [
+    'DEFAULT_MAILER' => [
 
         'recipients' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
         'attachment_tokens' => [ 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type' ],
