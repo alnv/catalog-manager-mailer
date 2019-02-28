@@ -17,6 +17,7 @@ $GLOBALS['TL_LANG']['tl_mailer']['notification'] = [ 'Notification', 'Please sel
 $GLOBALS['TL_LANG']['tl_mailer']['useFilter'] = [ 'Use filer', 'Hier können Sie eine Filterung anwenden.' ];
 $GLOBALS['TL_LANG']['tl_mailer']['dbTaxonomy'] = [ 'Filter', 'Here you can define your filter. Use <strong> {{fieldname}} </strong> to access the form data.' ];
 
+$GLOBALS['TL_LANG']['tl_mailer']['is_test'] = [ 'Test run', 'During the test run, no emails are sent and additional system logs are generated.' ];
 $GLOBALS['TL_LANG']['tl_mailer']['state'] = [ 'State', 'Here you will find the current status of the e-mail dispatch.' ];
 $GLOBALS['TL_LANG']['tl_mailer']['end_at'] = [ 'Finished at', 'Here is the date of completion of the e-mail delivery.' ];
 $GLOBALS['TL_LANG']['tl_mailer']['post'] = [ 'Form data', 'Here you will find the form data from the frontend editing.' ];
