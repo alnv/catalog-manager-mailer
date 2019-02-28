@@ -65,12 +65,12 @@ class Mailer extends CatalogController {
             return null;
         }
 
-        $intTransit = $this->arrParameters['offset'];
-        $intTotalTransits =   max( ceil( $intTotal / $intPerRate ), 1 );
+        $intTransit = (int) $this->arrParameters['offset'];
+        $intTotalTransits =  max( ceil( $intTotal / $intPerRate ), 1 );
 
         if ( $this->arrParameters['is_test'] ) {
 
-            \System::log( 'In the Catalog Mailer "' . $this->arrParameters['name'] . '" are ' . $intTotal . ' records. ' . $intPerRate . ' e-mails will be sent per round [' . ( $intTransit ? $intTransit : 1 ) . '/' . $intTotalTransits . '].', __METHOD__, TL_GENERAL );
+            \System::log( 'In the Catalog Mailer "' . $this->arrParameters['name'] . '" are ' . $intTotal . ' records.', __METHOD__, TL_GENERAL );
         }
 
         if ( $intTransit < $intTotalTransits ) {
@@ -94,13 +94,18 @@ class Mailer extends CatalogController {
                 }
             }
 
-            $intOffset += 1;
+            $intOffset = $intOffset + 1;
 
             $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
 
                 'offset' => $intOffset
 
             ])->execute( $this->arrParameters['id'] );
+
+            if ( $this->arrParameters['is_test'] ) {
+
+                \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" will send ' . $intPerRate . ' emails per round ['.$intTransit.'/'.$intTotalTransits.']', __METHOD__, TL_GENERAL );
+            }
         }
 
         else {
