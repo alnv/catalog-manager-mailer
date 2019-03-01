@@ -78,8 +78,7 @@ class Mailer extends CatalogController {
 
         if ( is_array( $this->arrParameters['post'] ) && isset( $this->arrParameters['post']['tokens'] ) ) $arrPostTokens = $this->arrParameters['post']['tokens'];
         if ( is_array( $this->arrParameters['post'] ) && isset( $this->arrParameters['post']['type'] ) ) $strPostType = $this->arrParameters['post']['type'];
-
-
+        
         if ( $intTransit < $intTotal ) {
 
             $intOffset = $intTransit ? ( $intTransit + $intPerRate ) : 0;
