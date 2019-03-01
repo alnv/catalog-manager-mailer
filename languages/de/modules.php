@@ -1,4 +1,4 @@
 <?php
 
-$GLOBALS['TL_LANG']['MOD']['catalog-manager-mailer'] = [ 'Mailer', 'Catalog Manager Mailer Tool.' ];
-$GLOBALS['TL_LANG']['MOD']['catalog-manager-reminder'] = [ 'Reminder', 'Catalog Manager Reminder Tool.' ];
+$GLOBALS['TL_LANG']['MOD']['cm-mailer'] = [ 'Mailer', 'Catalog Manager Mailer Tool.' ];
+$GLOBALS['TL_LANG']['MOD']['cm-reminder'] = [ 'Reminder', 'Catalog Manager Reminder Tool.' ];

@@ -3,7 +3,7 @@
 $GLOBALS['TL_CRON']['minutely'][] = [ 'CatalogManager\Mailer\Cronjob', 'mailer' ];
 $GLOBALS['TL_CRON']['minutely'][] = [ 'CatalogManager\Mailer\Cronjob', 'reminder' ];
 
-$GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-mailer'] = [
+$GLOBALS['BE_MOD']['catalog-manager-extensions']['cm-mailer'] = [
 
     'name' => 'catalog-manager-mailer',
     'icon' => 'system/modules/catalog-manager-mailer/assets/icon.svg',
@@ -15,7 +15,7 @@ $GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-mailer'] = [
     ]
 ];
 
-$GLOBALS['BE_MOD']['catalog-manager-extensions']['catalog-manager-reminder'] = [
+$GLOBALS['BE_MOD']['catalog-manager-extensions']['cm-reminder'] = [
 
     'name' => 'catalog-manager-reminder',
     'icon' => 'system/modules/catalog-manager-mailer/assets/icon.svg',
