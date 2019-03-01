@@ -91,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
     'palettes' => [
 
         '__selector__' => [ 'useFilter' ],
-        'default' => '{general_settings},name,tablename;{notification_settings},notification,emailField;{query_settings},useFilter;'
+        'default' => '{general_settings},name,tablename;{notification_settings},notification,emailField,is_test;{query_settings},useFilter;'
     ],
 
     'subpalettes' => [
@@ -197,6 +197,20 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
 
             'exclude' => true,
             'sql' => "varchar(128) NOT NULL default ''"
+        ],
+
+        'is_test' => [
+
+            'label' => &$GLOBALS['TL_LANG']['tl_mailer']['is_test'],
+            'inputType' => 'checkbox',
+
+            'eval' => [
+
+                'tl_class' => 'w50 m12'
+            ],
+
+            'exclude' => true,
+            'sql' => "char(1) NOT NULL default ''"
         ],
 
         'useFilter' => [

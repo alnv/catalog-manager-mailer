@@ -10,7 +10,12 @@ class tl_module extends \Backend {
         $arrReturn = [];
         $objMailer = $this->Database->prepare('SELECT * FROM tl_mailer')->execute();
 
-        if ( $objMailer->next() ) {
+        if ( !$objMailer->numRows ) {
+
+            return $arrReturn;
+        }
+
+        while ( $objMailer->next() ) {
 
             $arrReturn[ $objMailer->id ] = $objMailer->name;
         }

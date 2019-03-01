@@ -34,7 +34,14 @@ class Mailer extends CatalogController {
 
     public function send() {
 
-        if ( !$this->arrParameters['notification'] ) return null;
+        \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is running', __METHOD__, TL_GENERAL );
+
+        if ( !$this->arrParameters['notification'] ) {
+
+            $this->log( 'No notification is defined' , __METHOD__, TL_ERROR );
+
+            return null;
+        }
 
         $objNotification = \NotificationCenter\Model\Notification::findByPk( $this->arrParameters['notification'] );
 
@@ -51,33 +58,54 @@ class Mailer extends CatalogController {
         $intTotal = count( $this->arrEntities );
         $arrRecipient = array_keys( $this->arrEntities );
 
-        if ( !$intTotal ) return null;
+        if ( !$intTotal ) {
 
-        $intTransit = $this->arrParameters['offset'];
-        $intTotalTransits =   max( ceil( $intTotal / $intPerRate ), 1 );
+            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is empty', __METHOD__, TL_GENERAL );
+
+            return null;
+        }
+
+        $intTransit = (int) $this->arrParameters['offset'];
+        $intTotalTransits =  max( ceil( $intTotal / $intPerRate ), 1 );
+
+        if ( $this->arrParameters['is_test'] ) {
+
+            \System::log( 'In the Catalog Mailer "' . $this->arrParameters['name'] . '" are ' . $intTotal . ' records.', __METHOD__, TL_GENERAL );
+        }
 
         if ( $intTransit < $intTotalTransits ) {
 
             $intOffset = $intTransit * $intPerRate;
             $intLimit = min( $intPerRate + $intOffset, $intTotal );
 
-            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is running', __METHOD__, TL_GENERAL );
-
             for ( $i = $intOffset; $i < $intLimit; $i++ ) {
 
                 $strEmail = $arrRecipient[ $i ];
                 $arrTokens = $this->arrEntities[ $strEmail ];
 
-                $objNotification->send( $arrTokens, $GLOBALS['TL_LANGUAGE'] );
+                if ( !$this->arrParameters['is_test'] ) {
+
+                    $objNotification->send( $arrTokens, $GLOBALS['TL_LANGUAGE'] );
+                }
+
+                else {
+
+                    \System::log( 'An e-mail has been sent to ' . $strEmail . ' [TEST]', __METHOD__, TL_GENERAL );
+                }
             }
 
-            $intOffset += 1;
+            $intOffset = $intOffset + 1;
 
             $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
 
                 'offset' => $intOffset
 
             ])->execute( $this->arrParameters['id'] );
+
+            if ( $this->arrParameters['is_test'] ) {
+
+                \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" will send ' . $intPerRate . ' emails per round ['.$intTransit.'/'.$intTotalTransits.']', __METHOD__, TL_GENERAL );
+            }
         }
 
         else {
@@ -167,6 +195,11 @@ class Mailer extends CatalogController {
 
         if ( !$objEntities->numRows ) return null;
 
+        if ( $this->arrParameters['is_test'] ) {
+
+            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" query: ' . $objEntities->query, __METHOD__, TL_GENERAL );
+        }
+
         while ( $objEntities->next() ) {
 
             $arrEntity = $objEntities->row();
@@ -254,7 +287,7 @@ class Mailer extends CatalogController {
 
         ])->execute( $this->arrParameters['id'] );
 
-        \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is ready', __METHOD__, TL_GENERAL );
+        \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" was successfully completed', __METHOD__, TL_GENERAL );
     }
 
 

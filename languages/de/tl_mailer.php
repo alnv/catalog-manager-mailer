@@ -14,6 +14,7 @@ $GLOBALS['TL_LANG']['tl_mailer']['tablename'] = [ 'Tabelle', 'Bitte wählen Sie 
 $GLOBALS['TL_LANG']['tl_mailer']['notification'] = [ 'Benachritigung', 'Bitte wählen Sie Ihre Benachritigung aus.' ];
 $GLOBALS['TL_LANG']['tl_mailer']['emailField'] = [ 'E-Mail Eingabefeld', 'Bitte definieren Sie ein E-Mail Eingabefeld.' ];
 
+$GLOBALS['TL_LANG']['tl_mailer']['is_test'] = [ 'Testdurchlauf', 'Beim Testdurchlauf werden keine E-Mails verschickt und zusätzliche System Logs erzeugt.' ];
 $GLOBALS['TL_LANG']['tl_mailer']['useFilter'] = [ 'Filterung anwenden', 'Hier können Sie eine Filterung anwenden.' ];
 $GLOBALS['TL_LANG']['tl_mailer']['dbTaxonomy'] = [ 'Filterung', 'Hier können Sie Ihre Filterung definieren. Mit <strong>{{feldname}}</strong> können Sie auf die Formulardaten zugreifen.' ];
 
