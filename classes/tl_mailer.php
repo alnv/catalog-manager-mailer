@@ -91,7 +91,8 @@ class tl_mailer extends \Backend {
              *
              $objMail = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( \Input::get('id') );
              $arrParameters = $objMail->row();
-             $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'] );
+             $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'], true );
+             $arrParameters['post'] = deserialize( $arrParameters['post'], true );
              $objMailer = new Mailer( $arrParameters );
              $objMailer->send();
              *

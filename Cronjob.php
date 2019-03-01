@@ -19,7 +19,7 @@ class Cronjob extends CatalogController {
 
         if ( !$this->Database->tableExists( 'tl_mailer' ) ) return null;
 
-        $objMailers = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE in_progress = "1"' )->limit(1)->execute();
+        $objMailers = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE in_progress = "1"' )->execute();
 
         if ( !$objMailers->numRows ) return null;
 
@@ -34,7 +34,8 @@ class Cronjob extends CatalogController {
                 continue;
             }
 
-            $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'] );
+            $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'], true );
+            $arrParameters['post'] = deserialize( $arrParameters['post'], true );
 
             $objMailer = new Mailer( $arrParameters );
             $objMailer->send();

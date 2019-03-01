@@ -56,7 +56,7 @@ class Mailer extends CatalogController {
 
         $intPerRate = 10;
         $intTotal = count( $this->arrEntities );
-        $arrRecipient = array_keys( $this->arrEntities );
+        $arrRecipients = array_keys( $this->arrEntities );
 
         if ( !$intTotal ) {
 
@@ -66,22 +66,94 @@ class Mailer extends CatalogController {
         }
 
         $intTransit = (int) $this->arrParameters['offset'];
-        $intTotalTransits =  max( ceil( $intTotal / $intPerRate ), 1 );
 
         if ( $this->arrParameters['is_test'] ) {
 
             \System::log( 'In the Catalog Mailer "' . $this->arrParameters['name'] . '" are ' . $intTotal . ' records.', __METHOD__, TL_GENERAL );
+            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" will send ' . $intPerRate . ' emails per round ['.$intTransit.'/'.$intTotal.']', __METHOD__, TL_GENERAL );
         }
 
-        if ( $intTransit < $intTotalTransits ) {
+        $strPostType = '';
+        $arrPostTokens = [];
 
-            $intOffset = $intTransit * $intPerRate;
-            $intLimit = min( $intPerRate + $intOffset, $intTotal );
+        if ( is_array( $this->arrParameters['post'] ) && isset( $this->arrParameters['post']['tokens'] ) ) $arrPostTokens = $this->arrParameters['post']['tokens'];
+        if ( is_array( $this->arrParameters['post'] ) && isset( $this->arrParameters['post']['type'] ) ) $strPostType = $this->arrParameters['post']['type'];
+
+
+        if ( $intTransit < $intTotal ) {
+
+            $intOffset = $intTransit ? ( $intTransit + $intPerRate ) : 0;
+            $intLimit = min( [ ( $intPerRate + $intOffset ), $intTotal ] );
 
             for ( $i = $intOffset; $i < $intLimit; $i++ ) {
 
-                $strEmail = $arrRecipient[ $i ];
-                $arrTokens = $this->arrEntities[ $strEmail ];
+                if ( !isset( $arrRecipients[ $i ] ) ) {
+
+                    continue;
+                }
+
+                $strEmail = $arrRecipients[ $i ];
+                $arrEntity = $this->arrEntities[ $strEmail ];
+                $arrParsedEntity = Toolkit::parseCatalogValues( $arrEntity, $this->arrCatalogFields, true );
+
+                $arrTokens = [];
+                $arrTokens['recipient'] = $strEmail;
+                $arrTokens['admin_email'] = \Config::get( 'adminEmail' );
+
+                foreach ( $arrParsedEntity as $strFieldname => $strValue ) {
+
+                    $arrTokens[ 'clean_' . $strFieldname ] = $strValue;
+                }
+
+                foreach ( $arrEntity as $strFieldname => $strValue ) {
+
+                    $arrTokens[ 'raw_' . $strFieldname ] = $strValue;
+                }
+
+                foreach ( $this->arrCatalog as $strOptionname => $strValue ) {
+
+                    $arrTokens[ 'table_' . $strOptionname ] = is_array( $strOptionname ) ? serialize( $strOptionname ) : $strOptionname;
+                }
+
+                foreach ( $arrPostTokens as $strToken => $strValue ) {
+
+                    $arrTokens[ $strToken ] = $strValue;
+                }
+
+                if ( $strPostType ) {
+
+                    $arrTokens[ 'post_type' ] = $strPostType;
+                }
+
+                foreach ( $this->arrCatalogFields as $strFieldname => $arrField ) {
+
+                    if ( !is_array( $arrField ) ) continue;
+                    if ( in_array( $arrField['type'], Toolkit::excludeFromDc() ) ) continue;
+
+                    if ( is_array( $arrField['_dcFormat'] ) && isset( $arrField['_dcFormat']['label'] ) && isset( $arrField['_dcFormat']['label'][0] ) ) {
+
+                        $arrTokens[ 'field_' . $strFieldname .'_label' ] = $arrField['_dcFormat']['label'][0];
+                        $arrTokens[ 'field_' . $strFieldname .'_description' ] = $arrField['_dcFormat']['label'][1];
+                    }
+
+                    foreach ( $arrField as $strOptionname => $strValue ) {
+
+                        $arrTokens[ 'field_' . $strFieldname .'_'. $strOptionname ] = is_array( $strOptionname ) ? serialize( $strOptionname ) : $strOptionname;
+                    }
+                }
+
+                $arrTokens['reminder_attachment'] = '';
+
+                if ( $this->arrParameters['reminder_id'] ) {
+
+                    $objReminder = $this->Database->prepare( 'SELECT * FROM tl_reminder WHERE id = ?' )->limit(1)->execute( $this->arrParameters['reminder_id'] );
+
+                    if ( $objReminder->numRows ) {
+
+                        $objAttachmentBuilder = new AttachmentBuilder();
+                        $arrTokens['reminder_attachment'] = $objAttachmentBuilder->render( $objReminder, $arrEntity );
+                    }
+                }
 
                 if ( !$this->arrParameters['is_test'] ) {
 
@@ -94,18 +166,11 @@ class Mailer extends CatalogController {
                 }
             }
 
-            $intOffset = $intOffset + 1;
-
             $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
 
-                'offset' => $intOffset
+                'offset' => ( $intOffset ? $intOffset : $intLimit )
 
             ])->execute( $this->arrParameters['id'] );
-
-            if ( $this->arrParameters['is_test'] ) {
-
-                \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" will send ' . $intPerRate . ' emails per round ['.$intTransit.'/'.$intTotalTransits.']', __METHOD__, TL_GENERAL );
-            }
         }
 
         else {
@@ -118,14 +183,6 @@ class Mailer extends CatalogController {
 
     protected function getEntities() {
 
-        $arrPostData = Toolkit::deserialize( $this->arrParameters['post'] );
-
-        $strPostType = '';
-        $arrPostTokens = [];
-
-        if ( is_array( $arrPostData ) && isset( $arrPostData['tokens'] ) ) $arrPostTokens = $arrPostData['tokens'];
-        if ( is_array( $arrPostData ) && isset( $arrPostData['type'] ) ) $strPostType = $arrPostData['type'];
-
         $arrQuery = [
 
             'table' => $this->arrParameters['tablename'],
@@ -134,9 +191,16 @@ class Mailer extends CatalogController {
 
         if ( $this->arrParameters['useFilter'] && is_array( $this->arrParameters['dbTaxonomy'] ) && isset( $this->arrParameters['dbTaxonomy']['query'] ) ) {
 
-            $arrQuery['where'] = Toolkit::parseQueries( $this->arrParameters['dbTaxonomy']['query'], function ( $arrQuery ) use ( $arrPostData ) {
+            $arrQuery['where'] = Toolkit::parseQueries( $this->arrParameters['dbTaxonomy']['query'], function ( $arrQuery ) {
 
-                $arrQuery['value'] = Toolkit::parsePseudoInserttag( $arrQuery['value'], $arrPostData['row'] );
+                $arrRow = [];
+
+                if ( isset( $this->arrParameters['post']['row'] ) && is_array( $this->arrParameters['post']['row'] ) ) {
+
+                    $arrRow = $this->arrParameters['post']['row'];
+                }
+
+                $arrQuery['value'] = Toolkit::parsePseudoInserttag( $arrQuery['value'], $arrRow );
 
                 return $arrQuery;
             });
@@ -195,81 +259,16 @@ class Mailer extends CatalogController {
 
         if ( !$objEntities->numRows ) return null;
 
-        if ( $this->arrParameters['is_test'] ) {
-
-            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" query: ' . $objEntities->query, __METHOD__, TL_GENERAL );
-        }
-
         while ( $objEntities->next() ) {
 
             $arrEntity = $objEntities->row();
             $strIdentifier = $this->arrParameters['emailField'] ? $this->arrParameters['emailField'] : 'id';
+            $this->arrEntities[ $arrEntity[ $strIdentifier ] ] = $arrEntity;
+        }
 
-            if ( !is_array( $arrEntity ) ) continue;
-            if ( !isset( $arrEntity[ $strIdentifier ] ) || Toolkit::isEmpty( $arrEntity[ $strIdentifier ] ) ) continue;
+        if ( $this->arrParameters['is_test'] ) {
 
-            $arrRecord = Toolkit::parseCatalogValues( $arrEntity, $this->arrCatalogFields, true );
-
-            $arrTokens = [];
-            $arrTokens['recipient'] = $arrEntity[ $strIdentifier ];
-            $arrTokens['admin_email'] = \Config::get( 'adminEmail' );
-
-            foreach ( $arrRecord as $strFieldname => $strValue ) {
-
-                $arrTokens[ 'clean_' . $strFieldname ] = $strValue;
-            }
-
-            foreach ( $arrRecord as $strFieldname => $strValue ) {
-
-                $arrTokens[ 'raw_' . $strFieldname ] = $arrEntity[ $strFieldname ];
-            }
-
-            foreach ( $this->arrCatalog as $strOptionname => $strValue ) {
-
-                $arrTokens[ 'table_' . $strOptionname ] = is_array( $strOptionname ) ? serialize( $strOptionname ) : $strOptionname;
-            }
-
-            foreach ( $arrPostTokens as $strToken => $strValue ) {
-
-                $arrTokens[ $strToken ] = $strValue;
-            }
-
-            if ( $strPostType ) {
-
-                $arrTokens[ 'post_type' ] = $strPostType;
-            }
-
-            foreach ( $this->arrCatalogFields as $strFieldname => $arrField ) {
-
-                if ( !is_array( $arrField ) ) continue;
-                if ( in_array( $arrField['type'], Toolkit::excludeFromDc() ) ) continue;
-
-                if ( is_array( $arrField['_dcFormat'] ) && isset( $arrField['_dcFormat']['label'] ) && isset( $arrField['_dcFormat']['label'][0] ) ) {
-
-                    $arrTokens[ 'field_' . $strFieldname .'_label' ] = $arrField['_dcFormat']['label'][0];
-                    $arrTokens[ 'field_' . $strFieldname .'_description' ] = $arrField['_dcFormat']['label'][1];
-                }
-
-                foreach ( $arrField as $strOptionname => $strValue ) {
-
-                    $arrTokens[ 'field_' . $strFieldname .'_'. $strOptionname ] = is_array( $strOptionname ) ? serialize( $strOptionname ) : $strOptionname;
-                }
-            }
-
-            $arrTokens['reminder_attachment'] = '';
-
-            if ( $this->arrParameters['reminder_id'] ) {
-
-                $objReminder = $this->Database->prepare( 'SELECT * FROM tl_reminder WHERE id = ?' )->limit(1)->execute( $this->arrParameters['reminder_id'] );
-
-                if ( $objReminder->numRows ) {
-
-                    $objAttachmentBuilder = new AttachmentBuilder();
-                    $arrTokens['reminder_attachment'] = $objAttachmentBuilder->render( $objReminder, $arrEntity );
-                }
-            }
-
-            $this->arrEntities[ $arrTokens['recipient'] ] = $arrTokens;
+            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" query: ' . $objEntities->query, __METHOD__, TL_GENERAL );
         }
     }
 
