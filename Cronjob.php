@@ -34,9 +34,6 @@ class Cronjob extends CatalogController {
                 continue;
             }
 
-            $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'], true );
-            $arrParameters['post'] = deserialize( $arrParameters['post'], true );
-
             $objMailer = new Mailer( $arrParameters );
             $objMailer->send();
         }

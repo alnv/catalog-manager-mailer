@@ -24,6 +24,9 @@ class Mailer extends CatalogController {
         $this->import( 'SQLQueryBuilder' );
         $this->import( 'CatalogFieldBuilder' );
 
+        $arrParameters['dbTaxonomy'] = deserialize( $arrParameters['dbTaxonomy'], true );
+        $arrParameters['post'] = deserialize( $arrParameters['post'], true );
+
         $this->CatalogFieldBuilder->initialize( $arrParameters['tablename'] );
 
         $this->arrCatalogFields = $this->CatalogFieldBuilder->getCatalogFields( true, $this );
