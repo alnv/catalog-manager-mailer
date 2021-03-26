@@ -1,85 +1,59 @@
 <?php
 
 $GLOBALS['TL_DCA']['tl_mailer'] = [
-
     'config' => [
-
         'dataContainer' => 'Table',
-
         'onload_callback' => [
-
-            [ 'CatalogManager\Mailer\tl_mailer', 'run' ]
+            ['CatalogManager\Mailer\tl_mailer', 'run']
         ],
-
         'sql' => [
-
             'keys' => [
-
                 'id' => 'primary'
             ]
         ]
     ],
-
     'list' => [
-
         'sorting' => [
-
             'mode' => 2,
             'flag' => 1,
             'fields' => [ 'name' ],
             'panelLayout' => 'filter;sort,search,limit'
         ],
-
         'label' => [
-
             'showColumns' => true,
             'fields' => [ 'name', 'tablename', 'start_at', 'end_at', 'state' ]
         ],
-
         'operations' => [
-
             'edit' => [
-
                 'label' => &$GLOBALS['TL_LANG']['tl_mailer']['edit'],
                 'href' => 'act=edit',
                 'icon' => 'header.gif'
             ],
-
             'send' => [
-
                 'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['startMailerConfirm'] . '\'))return false;Backend.getScrollOffset()"',
                 'label' => &$GLOBALS['TL_LANG']['tl_mailer']['send'],
                 'href' => 'sendMail=1',
                 'icon' => 'member_.gif'
             ],
-
             'copy' => [
-
                 'label' => &$GLOBALS['TL_LANG']['tl_mailer']['copy'],
                 'href' => 'act=copy',
                 'icon' => 'copy.gif'
             ],
-
             'delete' => [
-
                 'attributes' => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
                 'label' => &$GLOBALS['TL_LANG']['tl_mailer']['delete'],
                 'href' => 'act=delete',
                 'icon' => 'delete.gif',
             ],
-
             'show' => [
-
                 'label' => &$GLOBALS['TL_LANG']['tl_mailer']['show'],
                 'href' => 'act=show',
                 'icon' => 'show.gif'
             ]
         ],
-
         'global_operations' => [
-
             'all' => [
-
                 'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
                 'href' => 'act=select',
                 'class' => 'header_edit_all',
@@ -87,18 +61,13 @@ $GLOBALS['TL_DCA']['tl_mailer'] = [
             ]
         ]
     ],
-
     'palettes' => [
-
         '__selector__' => [ 'useFilter' ],
         'default' => '{general_settings},name,tablename;{notification_settings},notification,emailField,is_test;{query_settings},useFilter;'
     ],
-
     'subpalettes' => [
-
         'useFilter' => 'dbTaxonomy'
     ],
-
     'fields' => [
 
         'id' => [

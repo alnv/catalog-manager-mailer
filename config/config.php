@@ -1,7 +1,7 @@
 <?php
 
-$GLOBALS['TL_CRON']['minutely'][] = [ 'CatalogManager\Mailer\Cronjob', 'mailer' ];
-$GLOBALS['TL_CRON']['minutely'][] = [ 'CatalogManager\Mailer\Cronjob', 'reminder' ];
+$GLOBALS['TL_CRON']['minutely'][] = ['CatalogManager\Mailer\Cronjob', 'mailer'];
+$GLOBALS['TL_CRON']['minutely'][] = ['CatalogManager\Mailer\Cronjob', 'reminder'];
 
 $GLOBALS['BE_MOD']['catalog-manager-extensions']['cm-mailer'] = [
 

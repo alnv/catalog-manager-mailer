@@ -21,16 +21,12 @@ class Cronjob extends CatalogController {
 
         $objMailers = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE in_progress = "1"' )->execute();
 
-        if ( !$objMailers->numRows ) return null;
+        if (!$objMailers->numRows) return null;
 
-        while ( $objMailers->next() ) {
-
+        while ($objMailers->next()) {
             $arrParameters = $objMailers->row();
-
-            if ( !$this->Database->tableExists( $objMailers->tablename ) ) {
-
-                $this->setState( 'failed', $arrParameters['id'] );
-
+            if (!$this->Database->tableExists( $objMailers->tablename)) {
+                $this->setState('failed', $arrParameters['id']);
                 continue;
             }
 
