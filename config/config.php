@@ -4,24 +4,18 @@ $GLOBALS['TL_CRON']['minutely'][] = ['CatalogManager\Mailer\Cronjob', 'mailer'];
 $GLOBALS['TL_CRON']['minutely'][] = ['CatalogManager\Mailer\Cronjob', 'reminder'];
 
 $GLOBALS['BE_MOD']['catalog-manager-extensions']['cm-mailer'] = [
-
     'name' => 'catalog-manager-mailer',
     'icon' => 'system/modules/catalog-manager-mailer/assets/icon.svg',
-
     'tables' => [
-
         'tl_mailer',
         'tl_mailer_queue'
     ]
 ];
 
 $GLOBALS['BE_MOD']['catalog-manager-extensions']['cm-reminder'] = [
-
     'name' => 'catalog-manager-reminder',
     'icon' => 'system/modules/catalog-manager-mailer/assets/icon.svg',
-
     'tables' => [
-
         'tl_reminder'
     ]
 ];
@@ -48,7 +42,3 @@ $GLOBALS['NOTIFICATION_CENTER']['NOTIFICATION_TYPE']['CATALOG_MAILER'] = [
         'email_html' => [ 'admin_email', 'recipient', 'raw_*', 'clean_*', 'field_*', 'table_*', 'post_raw_*', 'post_clean_*', 'post_old_raw_*', 'post_old_clean_*', 'post_type', 'reminder_attachment' ]
     ]
 ];
-
-// CRONJOB DEBUG REMINDER
-// $objCronJob = new CatalogManager\Mailer\Cronjob();
-// $objCronJob->reminder();

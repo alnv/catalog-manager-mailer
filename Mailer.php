@@ -37,54 +37,45 @@ class Mailer extends CatalogController {
 
     public function send() {
 
-        \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is running', __METHOD__, TL_GENERAL );
+        \System::log('Catalog Mailer: "' . $this->arrParameters['name'] . '" is running', __METHOD__, TL_GENERAL);
 
-        if ( !$this->arrParameters['notification'] ) {
-
-            $this->log( 'No notification is defined' , __METHOD__, TL_ERROR );
-
+        if (!$this->arrParameters['notification']) {
+            \System::log( 'No notification is defined' , __METHOD__, TL_ERROR );
             return null;
         }
-
         $objNotification = \NotificationCenter\Model\Notification::findByPk( $this->arrParameters['notification'] );
-
         if ( $objNotification === null ) {
-
-            $this->log( 'The notification was not found ID ' . $this->arrParameters['notification'] , __METHOD__, TL_ERROR );
-
+            \System::log('The notification was not found ID ' . $this->arrParameters['notification'] , __METHOD__, TL_ERROR);
             return null;
         }
 
         $this->getEntities();
-
-        $intPerRate = 10;
-        $intTotal = count($this->arrEntities);
-
-        if (!$intTotal) {
-            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" is empty', __METHOD__, TL_GENERAL );
+        if (empty($this->arrEntities)) {
+            \System::log('Catalog Mailer: "' . $this->arrParameters['name'] . '" is empty', __METHOD__, TL_GENERAL);
             return null;
         }
 
-        $intTransit = (int) $this->arrParameters['offset'];
-
-        if ( $this->arrParameters['is_test'] ) {
-
-            \System::log( 'In the Catalog Mailer "' . $this->arrParameters['name'] . '" are ' . $intTotal . ' records.', __METHOD__, TL_GENERAL );
-            \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" will send ' . $intPerRate . ' emails per round ['.$intTransit.'/'.$intTotal.']', __METHOD__, TL_GENERAL );
-        }
-
+        $intPerRate = 10;
         $strPostType = '';
         $arrPostTokens = [];
+        $intTotal = count($this->arrEntities);
+        $intTransit = (int) $this->arrParameters['offset'];
 
         if ( is_array( $this->arrParameters['post'] ) && isset( $this->arrParameters['post']['tokens'] ) ) $arrPostTokens = $this->arrParameters['post']['tokens'];
         if ( is_array( $this->arrParameters['post'] ) && isset( $this->arrParameters['post']['type'] ) ) $strPostType = $this->arrParameters['post']['type'];
 
-        if ($intTransit < $intTotal) {
+        if (($intTransit*$intPerRate) < $intTotal) {
 
-            $intOffset = $intTransit ? ($intTransit + $intPerRate) : 0;
-            $intLimit = min([($intPerRate + $intOffset), $intTotal]);
+            $offset = $intTransit ? ($intTransit*$intPerRate) : 0;
+            if ($this->arrParameters['is_test']) {
+                \System::log('Catalog Mailer: Run '.($intTransit+1), __METHOD__, TL_GENERAL);
+            }
 
-            for ($i=$intOffset; $i<$intLimit; $i++) {
+            for ($i=$offset; $i<($offset+$intPerRate); $i++) {
+
+                if (!isset($this->arrEntities[$i])) {
+                    continue;
+                }
 
                 $arrRecipient = $this->arrEntities[$i];
                 $strEmail = $arrRecipient['email'];
@@ -117,8 +108,8 @@ class Mailer extends CatalogController {
                 }
 
                 foreach ( $this->arrCatalogFields as $strFieldname => $arrField ) {
-                    if ( !is_array( $arrField ) ) continue;
-                    if ( in_array( $arrField['type'], Toolkit::excludeFromDc() ) ) continue;
+                    if (!is_array($arrField)) continue;
+                    if (in_array($arrField['type'], Toolkit::excludeFromDc())) continue;
 
                     if ( is_array( $arrField['_dcFormat'] ) && isset( $arrField['_dcFormat']['label'] ) && isset( $arrField['_dcFormat']['label'][0] ) ) {
                         $arrTokens[ 'field_' . $strFieldname .'_label' ] = $arrField['_dcFormat']['label'][0];
@@ -132,40 +123,34 @@ class Mailer extends CatalogController {
 
                 $arrTokens['reminder_attachment'] = '';
 
-                if ( $this->arrParameters['reminder_id'] ) {
-                    $objReminder = $this->Database->prepare( 'SELECT * FROM tl_reminder WHERE id = ?' )->limit(1)->execute( $this->arrParameters['reminder_id'] );
-                    if ( $objReminder->numRows ) {
+                if ($this->arrParameters['reminder_id']) {
+                    $objReminder = \Database::getInstance()->prepare('SELECT * FROM tl_reminder WHERE id = ?')->limit(1)->execute($this->arrParameters['reminder_id']);
+                    if ($objReminder->numRows) {
                         $objAttachmentBuilder = new AttachmentBuilder();
-                        $arrTokens['reminder_attachment'] = $objAttachmentBuilder->render( $objReminder, $arrEntity );
+                        $arrTokens['reminder_attachment'] = $objAttachmentBuilder->render($objReminder, $arrEntity);
                     }
                 }
 
-                if ( !$this->arrParameters['is_test'] ) {
-                    $objNotification->send( $arrTokens, $GLOBALS['TL_LANGUAGE'] );
+                if (!$this->arrParameters['is_test']) {
+                    $objNotification->send($arrTokens, $GLOBALS['TL_LANGUAGE']);
                 } else {
-                    \System::log( 'An e-mail has been sent to ' . $strEmail . ' [TEST]', __METHOD__, TL_GENERAL );
+                    \System::log('Catalog Mailer: An email would be sent to ' . $strEmail, __METHOD__, TL_GENERAL);
                 }
             }
 
-            $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
-
-                'offset' => ( $intOffset ? $intOffset : $intLimit )
-
+            \Database::getInstance()->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
+                'offset' => ($intTransit+1)
             ])->execute( $this->arrParameters['id'] );
         }
-
         else {
-
             $this->end();
             $this->checkMailerQueue();
         }
     }
 
-
     protected function getEntities() {
 
         $arrQuery = [
-
             'table' => $this->arrParameters['tablename'],
             'where' => []
         ];
@@ -248,46 +233,38 @@ class Mailer extends CatalogController {
         }
     }
 
-
     protected function end() {
 
-        $this->Database->prepare( 'UPDATE tl_mailer %s WHERE id = ?' )->set([
-
+        \Database::getInstance()->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
             'post' => serialize( [] ),
             'in_progress' => '',
             'reminder_id' => 0,
             'state' => 'ready',
             'end_at' => time(),
             'offset' => 0
-
-        ])->execute( $this->arrParameters['id'] );
-
-        \System::log( 'Catalog Mailer "' . $this->arrParameters['name'] . '" was successfully completed', __METHOD__, TL_GENERAL );
+        ])->execute($this->arrParameters['id']);
+        \System::log('Catalog Mailer: "' . $this->arrParameters['name'] . '" was successfully completed', __METHOD__, TL_GENERAL);
     }
-
 
     protected function checkMailerQueue() {
 
-        $objQueue = $this->Database->prepare( 'SELECT * FROM tl_mailer_queue ORDER BY tstamp' )->limit(1)->execute();
+        $objQueue = \Database::getInstance()->prepare( 'SELECT * FROM tl_mailer_queue ORDER BY tstamp' )->limit(1)->execute();
 
         if ( $objQueue->numRows ) {
 
-            $objMailer = $this->Database->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( $objQueue->mailer_id );
+            $objMailer = \Database::getInstance()->prepare( 'SELECT * FROM tl_mailer WHERE id = ?' )->limit(1)->execute( $objQueue->mailer_id );
 
             if ( !$objMailer->numRows ) return null;
 
-            $this->Database->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
-
+            \Database::getInstance()->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
                 'reminder_id' => $objQueue->reminder_id,
                 'post' => $objQueue->post,
                 'start_at' => time(),
                 'in_progress' => '1',
                 'state' => 'active',
                 'offset' => 0
-
             ])->execute( $objMailer->id );
-
-            $this->Database->prepare( 'DELETE FROM tl_mailer_queue WHERE id = ?' )->execute( $objQueue->id );
+            \Database::getInstance()->prepare( 'DELETE FROM tl_mailer_queue WHERE id = ?' )->execute( $objQueue->id );
         }
     }
 }
