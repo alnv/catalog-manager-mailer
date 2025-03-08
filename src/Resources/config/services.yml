@@ -7,3 +7,6 @@ services:
     public: true
     arguments:
       - '@Terminal42\NotificationCenterBundle\NotificationCenter'
+  Alnv\CatalogManagerMailerBundle\NotificationCenter\MailerDefault:
+    tags:
+      notification_center: notification_type
