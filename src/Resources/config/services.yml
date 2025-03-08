@@ -1,0 +1,9 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+  mailer.services.notification_center:
+    class: Alnv\CatalogManagerMailerBundle\Services\NotificationCenter
+    public: true
+    arguments:
+      - '@Terminal42\NotificationCenterBundle\NotificationCenter'

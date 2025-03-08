@@ -51,8 +51,8 @@ class Mailer extends CatalogController
 
             return null;
         }
-        $objNotification = \NotificationCenter\Model\Notification::findByPk($this->arrParameters['notification']);
-        if ($objNotification === null) {
+
+        if (($this->arrParameters['notification'] ?? 0)) {
 
             System::getContainer()
                 ->get('monolog.logger.contao')
@@ -61,7 +61,9 @@ class Mailer extends CatalogController
             return null;
         }
 
+        $objNotification = System::getContainer()->get('mailer.services.notification_center');
         $this->getEntities();
+
         if (empty($this->arrEntities)) {
 
             System::getContainer()
@@ -77,8 +79,8 @@ class Mailer extends CatalogController
         $intTotal = count($this->arrEntities);
         $intTransit = (int)$this->arrParameters['offset'];
 
-        if (is_array($this->arrParameters['post']) && isset($this->arrParameters['post']['tokens'])) $arrPostTokens = $this->arrParameters['post']['tokens'];
-        if (is_array($this->arrParameters['post']) && isset($this->arrParameters['post']['type'])) $strPostType = $this->arrParameters['post']['type'];
+        if (\is_array($this->arrParameters['post']) && isset($this->arrParameters['post']['tokens'])) $arrPostTokens = $this->arrParameters['post']['tokens'];
+        if (\is_array($this->arrParameters['post']) && isset($this->arrParameters['post']['type'])) $strPostType = $this->arrParameters['post']['type'];
 
         if (($intTransit * $intPerRate) < $intTotal) {
 
@@ -150,7 +152,7 @@ class Mailer extends CatalogController
                 }
 
                 if (!$this->arrParameters['is_test']) {
-                    $objNotification->send($arrTokens, $GLOBALS['TL_LANGUAGE']);
+                    $objNotification->send($this->arrParameters['notification'], $arrTokens);
                 } else {
 
                     System::getContainer()

@@ -10,7 +10,6 @@ class Cronjob extends CatalogController
 
     public function __construct()
     {
-
         parent::__construct();
     }
 
@@ -137,7 +136,7 @@ class Cronjob extends CatalogController
         }
     }
 
-    protected function executeReminder($objReminder)
+    protected function executeReminder($objReminder): void
     {
 
         $objMailer = Database::getInstance()->prepare('SELECT * FROM tl_mailer WHERE id = ?')->limit(1)->execute($objReminder->mailer_id);

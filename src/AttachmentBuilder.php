@@ -5,6 +5,7 @@ namespace Alnv\CatalogManagerMailerBundle;
 use Alnv\CatalogManagerBundle\CatalogController;
 use Alnv\CatalogManagerBundle\Toolkit;
 use Alnv\CatalogManagerBundle\SQLQueryBuilder;
+use Alnv\CatalogManagerBundle\CatalogFieldBuilder;
 use Contao\FrontendTemplate;
 use Contao\Date;
 
@@ -17,7 +18,6 @@ class AttachmentBuilder extends CatalogController
 
     public function __construct()
     {
-
         parent::__construct();
     }
 
@@ -47,14 +47,14 @@ class AttachmentBuilder extends CatalogController
             'where' => []
         ];
 
-        if (!empty($arrTaxonomies['query']) && is_array($arrTaxonomies['query'])) {
+        if (!empty($arrTaxonomies['query']) && \is_array($arrTaxonomies['query'])) {
             $arrQuery['where'] = Toolkit::parseQueries($arrTaxonomies['query'], function ($arrQuery) use ($arrActiveRecord) {
                 $arrQuery['value'] = Toolkit::parsePseudoInserttag($arrQuery['value'], $arrActiveRecord);
                 return $arrQuery;
             });
         }
 
-        if (is_array($this->arrCatalog['operations']) && in_array('invisible', $this->arrCatalog['operations'])) {
+        if (\is_array($this->arrCatalog['operations']) && in_array('invisible', $this->arrCatalog['operations'])) {
 
             $dteTime = Date::floorToMinute();
 
@@ -127,7 +127,6 @@ class AttachmentBuilder extends CatalogController
         }
 
         $objTemplate->setData([
-
             'header' => $arrHeader,
             'rows' => $arrRows
         ]);

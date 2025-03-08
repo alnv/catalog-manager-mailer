@@ -31,8 +31,8 @@ class tl_mailer extends Backend
 
         foreach ($arrFields as $strFieldname => $arrField) {
 
-            if (in_array($arrField['type'], Toolkit::excludeFromDc())) continue;
-            if (in_array($arrField['type'], $arrForbiddenTypes)) continue;
+            if (\in_array($arrField['type'], Toolkit::excludeFromDc())) continue;
+            if (\in_array($arrField['type'], $arrForbiddenTypes)) continue;
 
             $arrReturn[$strFieldname] = ($arrField['_dcFormat']['label'][0] ?? '') ?: $strFieldname;
         }
@@ -60,9 +60,9 @@ class tl_mailer extends Backend
         foreach ($arrFields as $strFieldname => $arrField) {
 
             if (!$this->Database->fieldExists($strFieldname, $strTablename)) continue;
-            if (in_array($arrField['type'], Toolkit::columnOnlyFields())) continue;
-            if (in_array($arrField['type'], Toolkit::excludeFromDc())) continue;
-            if (in_array($arrField['type'], $arrForbiddenTypes)) continue;
+            if (\in_array($arrField['type'], Toolkit::columnOnlyFields())) continue;
+            if (\in_array($arrField['type'], Toolkit::excludeFromDc())) continue;
+            if (\in_array($arrField['type'], $arrForbiddenTypes)) continue;
 
             $arrReturn[$strFieldname] = $arrField['_dcFormat'];
         }
@@ -109,7 +109,7 @@ class tl_mailer extends Backend
              *
              */
 
-            $this->redirect(preg_replace('/&(amp;)?sendMail=[^&]*/i', '', preg_replace('/&(amp;)?' . preg_quote("1", '/') . '=[^&]*/i', '', Environment::get('request'))));
+            $this->redirect(\preg_replace('/&(amp;)?sendMail=[^&]*/i', '', \preg_replace('/&(amp;)?' . \preg_quote("1", '/') . '=[^&]*/i', '', Environment::get('request'))));
         }
     }
 
@@ -122,14 +122,14 @@ class tl_mailer extends Backend
 
         if (!$this->Database->tableExists('tl_nc_notification')) return [];
 
-        $arrTypes = $GLOBALS['TL_DCA']['tl_mailer']['fields'][$dc->field]['eval']['ncNotificationChoices'];
+        $arrTypes = $GLOBALS['TL_DCA']['tl_mailer']['fields'][$dc->field]['eval']['ncNotificationChoices'] ?? [];
 
-        if (!empty($arrTypes) && is_array($arrTypes)) {
-            $strWhere = ' WHERE ' . implode(' OR ', array_fill(0, count($arrTypes), 'type=?'));
+        if (!empty($arrTypes) && \is_array($arrTypes)) {
+            $strWhere = ' WHERE ' . \implode(' OR ', \array_fill(0, \count($arrTypes), 'type=?'));
             $arrValues = $arrTypes;
         }
 
-        $objNotifications = $this->Database->prepare('SELECT id, title FROM tl_nc_notification' . $strWhere . ' ORDER BY title')->execute($arrValues);
+        $objNotifications = $this->Database->prepare('SELECT id, title FROM tl_nc_notification' . $strWhere . ' ORDER BY title')->execute(...$arrValues);
         while ($objNotifications->next()) {
             $arrChoices[$objNotifications->id] = $objNotifications->title;
         }

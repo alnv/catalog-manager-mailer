@@ -30,9 +30,9 @@ class tl_reminder extends Backend
         foreach ($arrFields as $strFieldname => $arrField) {
 
             if (!$this->Database->fieldExists($strFieldname, $strTablename)) continue;
-            if (in_array($arrField['type'], Toolkit::columnOnlyFields())) continue;
-            if (in_array($arrField['type'], Toolkit::excludeFromDc())) continue;
-            if (in_array($arrField['type'], $arrForbiddenTypes)) continue;
+            if (\in_array($arrField['type'], Toolkit::columnOnlyFields())) continue;
+            if (\in_array($arrField['type'], Toolkit::excludeFromDc())) continue;
+            if (\in_array($arrField['type'], $arrForbiddenTypes)) continue;
 
             $arrReturn[$strFieldname] = $arrField['_dcFormat'];
         }
@@ -40,7 +40,7 @@ class tl_reminder extends Backend
         return $arrReturn;
     }
 
-    public function getMailerIds()
+    public function getMailerIds(): array
     {
 
         $arrReturn = [];
@@ -55,10 +55,9 @@ class tl_reminder extends Backend
         return $arrReturn;
     }
 
-    public function getTables()
+    public function getTables(): array
     {
-
-        return $this->Database->listTables(null);
+        return $this->Database->listTables();
     }
 
     public function getTemplates()
@@ -66,7 +65,7 @@ class tl_reminder extends Backend
         return $this->getTemplateGroup('reminder_attachment');
     }
 
-    public function getColumns(DataContainer $dc)
+    public function getColumns(DataContainer $dc): array
     {
 
         $arrReturn = [];

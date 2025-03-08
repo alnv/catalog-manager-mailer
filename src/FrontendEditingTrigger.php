@@ -70,8 +70,8 @@ class FrontendEditingTrigger extends CatalogController
         if (!$objMailer->in_progress) {
 
             Database::getInstance()->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
-                'post' => serialize($this->arrPostData),
-                'start_at' => time(),
+                'post' => \serialize($this->arrPostData),
+                'start_at' => \time(),
                 'in_progress' => '1',
                 'state' => 'active',
                 'offset' => 0
@@ -79,19 +79,18 @@ class FrontendEditingTrigger extends CatalogController
         } else {
 
             $this->Database->prepare('INSERT INTO tl_mailer_queue %s')->set([
-                'tstamp' => time(),
+                'tstamp' => \time(),
                 'mailer_id' => $intMailerId,
-                'post' => serialize($this->arrPostData),
+                'post' => \serialize($this->arrPostData),
             ])->execute();
         }
     }
 
-    protected function setPostData($strType, $arrData)
+    protected function setPostData($strType, $arrData): void
     {
 
-
-        $this->arrPostData['table'] = $arrData['table'];
-        $this->arrPostData['row'] = $arrData['row'];
+        $this->arrPostData['table'] = $arrData['table'] ?? '';
+        $this->arrPostData['row'] = $arrData['row'] ?? '';
         $this->arrPostData['type'] = $strType;
 
         (new CatalogFieldBuilder)->initialize($this->arrPostData['table']);
@@ -102,7 +101,7 @@ class FrontendEditingTrigger extends CatalogController
         Toolkit::setTokens($arrData['row'], 'post_raw_', $this->arrPostData['tokens']);
         Toolkit::setTokens($arrClean, 'post_clean_', $this->arrPostData['tokens']);
 
-        if (in_array($strType, ['duplicate', 'update'])) {
+        if (\in_array($strType, ['duplicate', 'update'])) {
 
             if ($arrData['id']) {
 
