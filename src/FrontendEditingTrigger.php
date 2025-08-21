@@ -21,7 +21,6 @@ class FrontendEditingTrigger extends CatalogController
 
     public function __construct()
     {
-
         parent::__construct();
     }
 
@@ -78,7 +77,7 @@ class FrontendEditingTrigger extends CatalogController
             ])->execute($intMailerId);
         } else {
 
-            $this->Database->prepare('INSERT INTO tl_mailer_queue %s')->set([
+            Database::getInstance()->prepare('INSERT INTO tl_mailer_queue %s')->set([
                 'tstamp' => \time(),
                 'mailer_id' => $intMailerId,
                 'post' => \serialize($this->arrPostData),
