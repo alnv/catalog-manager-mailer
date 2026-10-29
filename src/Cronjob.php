@@ -15,7 +15,6 @@ class Cronjob extends CatalogController
 
     public function mailer()
     {
-
         if (!Database::getInstance()->tableExists('tl_mailer')) return null;
 
         $objMailers = Database::getInstance()->prepare('SELECT * FROM tl_mailer WHERE in_progress = "1"')->execute();
@@ -34,14 +33,13 @@ class Cronjob extends CatalogController
         }
     }
 
-    public function reminder()
+    public function reminder(): void
     {
 
-        if (!Database::getInstance()->tableExists('tl_reminder')) return null;
+        if (!Database::getInstance()->tableExists('tl_reminder')) return;
 
         $objReminders = Database::getInstance()->prepare('SELECT * FROM tl_reminder ')->execute();
-
-        if (!$objReminders->numRows) return null;
+        if (!$objReminders->numRows) return;
 
         $intCurrentTime = time();
         $intDayInterval = 86400;
@@ -57,14 +55,12 @@ class Cronjob extends CatalogController
         ];
 
         while ($objReminders->next()) {
-
             $this->executeReminderByInterval($objReminders->interval, $objReminders, $intCurrentTime, $arrIntervals);
         }
     }
 
     protected function setState($strState, $strId): void
     {
-
         Database::getInstance()->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
             'state' => $strState,
             'in_progress' => '',
@@ -142,7 +138,6 @@ class Cronjob extends CatalogController
         $objMailer = Database::getInstance()->prepare('SELECT * FROM tl_mailer WHERE id = ?')->limit(1)->execute($objReminder->mailer_id);
 
         if (!$objMailer->in_progress) {
-
             Database::getInstance()->prepare('UPDATE tl_mailer %s WHERE id = ?')->set([
                 'reminder_id' => $objReminder->id,
                 'post' => serialize([]),
@@ -153,7 +148,6 @@ class Cronjob extends CatalogController
 
             ])->execute($objReminder->mailer_id);
         } else {
-
             Database::getInstance()->prepare('INSERT INTO tl_mailer_queue %s')->set([
                 'tstamp' => time(),
                 'post' => serialize([]),

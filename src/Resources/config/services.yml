@@ -1,12 +1,19 @@
 services:
+
   _defaults:
     autowire: true
     autoconfigure: true
+
+  Alnv\CatalogManagerMailerBundle\Cronjobs\Minutely:
+    tags:
+      - { name: contao.cronjob, interval: minutely }
+
   mailer.services.notification_center:
     class: Alnv\CatalogManagerMailerBundle\Services\NotificationCenter
     public: true
     arguments:
       - '@Terminal42\NotificationCenterBundle\NotificationCenter'
+
   Alnv\CatalogManagerMailerBundle\NotificationCenter\MailerDefault:
     tags:
       notification_center: notification_type

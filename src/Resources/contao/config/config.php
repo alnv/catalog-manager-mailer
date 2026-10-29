@@ -1,10 +1,10 @@
 <?php
 
-use Alnv\CatalogManagerMailerBundle\Cronjob;
+# use Alnv\CatalogManagerMailerBundle\Cronjob;
 use Alnv\CatalogManagerMailerBundle\FrontendEditingTrigger;
 
-$GLOBALS['TL_CRON']['minutely'][] = [Cronjob::class, 'mailer'];
-$GLOBALS['TL_CRON']['minutely'][] = [Cronjob::class, 'reminder'];
+# $GLOBALS['TL_CRON']['minutely'][] = [Cronjob::class, 'mailer'];
+# $GLOBALS['TL_CRON']['minutely'][] = [Cronjob::class, 'reminder'];
 
 $GLOBALS['BE_MOD']['catalog-manager-extensions']['cm-mailer'] = [
     'name' => 'catalog-manager-mailer',
